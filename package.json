@@ -1,0 +1,25 @@
+{
+  "name": "03-api-nodejs-solid",
+  "version": "1.0.0",
+  "description": "## Sobre - Nesse projeto será desenvolvido uma aplicação para check-ins em academias. Aqui você irá aprender sobre alguns conceitos do SOLID, Design Patterns, Docker para Iniciar o banco de dados, JWT e Refresh Token, RBAC e diversos outros conceitos",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "tsx watch src/server.ts",
+    "start": "node build/server.js",
+    "build": "tsup src -d build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rocketseat/eslint-config": "^2.1.0",
+    "@types/node": "^20.8.10",
+    "eslint": "^8.53.0",
+    "tsup": "^7.2.0",
+    "tsx": "^3.14.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "fastify": "^4.24.3"
+  }
+}
