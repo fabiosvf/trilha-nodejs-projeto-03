@@ -40,8 +40,8 @@ save-exact=true
     },
   }
 }
-- Com essa configuração, toda vez que precisarmos referenciar um arquivo, basta iniciar com "@/" na área de `import` que o VSCode vai considerar sempre o caminho Absoluto ao invés do caminho Relativo onde geralmente utilizamos "../../.." para navegar entre as estruturas de pastas.
 ```
+- Com essa configuração, toda vez que precisarmos referenciar um arquivo, basta iniciar com __"@/"__ na área de `import` que o VSCode vai considerar sempre o caminho __Absoluto__ ao invés do caminho __Relativo__ onde geralmente utilizamos __"../../.."__ para navegar entre as estruturas de pastas.
 
 ## Como executar
 - Crie uma pasta para o projeto
