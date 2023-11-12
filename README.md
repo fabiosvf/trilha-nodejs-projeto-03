@@ -28,6 +28,21 @@ save-exact=true
 - Para validar a existência das variáveis de ambiente é necessário instalar a lib `zod` e depois realizar as configurações. No nosso caso, as configurações estão disponíveis no arquivo `/src/env/index.ts`.
 - Depois basta utilizar esse módulo em todos os lugares que utilizam variáveis de ambiente, como a porta do server em `/src/server.ts` ou até na configuração do banco de dados, geralmente nomeado como `database.ts`
 
+## Criando Aliases de Importação
+- Afim de facilitar a importação das referencias de módulos e libs à partir de qualquer ponto dentro do projeto, tem um recurso muito interessante que podemos habilitar no arquivo `tsconfig.json`. Segue a configuração:
+  _- Lembrando que ocultei as demais configurações do arquivo e mantive apenas o que é relevante para essa configuração, e também para facilitar o entendimento._
+```json
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+  }
+}
+- Com essa configuração, toda vez que precisarmos referenciar um arquivo, basta iniciar com "@/" na área de `import` que o VSCode vai considerar sempre o caminho Absoluto ao invés do caminho Relativo onde geralmente utilizamos "../../.." para navegar entre as estruturas de pastas.
+```
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
