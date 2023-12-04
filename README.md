@@ -43,6 +43,44 @@ save-exact=true
 ```
 - Com essa configuração, toda vez que precisarmos referenciar um arquivo, basta iniciar com __"@/"__ na área de `import` que o VSCode vai considerar sempre o caminho __Absoluto__ ao invés do caminho __Relativo__ onde geralmente utilizamos __"../../.."__ para navegar entre as estruturas de pastas.
 
+## Trabalhando com ORM - Object Relational Mapper
+- Existem várias formas de trabalhar com banco de dados no Node.js;
+  - Lib nativa do banco de dados
+    - Como estamos trabalhando com o banco de dados `PostgreSQL`, a lib nativa é o `pg` que pode ser acessado a partir do site https://node-postgres.com/
+  - Neste caso, os códigos SQL devem ser escritos manualmente e são aplicáveis apenas ao banco de dados nativo. Caso haja a necessidade de alterar o Banco de Dados, é possível que parte do códgio precise ser reescrito para se adaptar à mudança.
+  - Query Builders
+    - Os query builds possuem um nível de abstração mais alto, pois através dessas bibliotecas é possível criar queries utilizando métodos do JavaScript, e a lib se encarrega de converter para o código SQL Nativo. A parte legal é que é possível mudar de banco de dados sem precisar reescrever a aplicação.
+    - E um dos mais populares no momento é o `Knex.js`, que pode ser acessado à partir do link https://knexjs.org/
+  - ORMs (Object Relational Mapper)
+    - E por último temos os ORMs que o nível mais alto de abstração, e possui muitos recursos que facilitam o desenvolvimento. Existem várias versões:
+      - `Sequelize` https://sequelize.org/
+      - `TypeORM` https://typeorm.io/
+      - `Prisma` https://www.prisma.io/
+    - Neste projetos iremos utilizar o `Prisma` pela compatibilidade e integração nativa com o `TypeScript`, além de migrations automatizadas, dentre outros recursos.
+- Para instalar a lib `primsa` como dependência de desenvolvimento, digite:
+```
+$ npm i prisma -D
+```
+- Para criar o arquivo com as configurações iniciais do `Prisma` à partir da raiz do projeto, digite o seguinte comando:
+```
+$ npx prisma init
+```
+- Será necessário instalar e habilitar a extensão `Prisma` no `VSCode`
+- Verifique se a seguinte configuração está habilitada no arquivo `settings.json`:
+```json
+"[prisma]": {
+  "editor.formatOnSave": true
+}
+```
+- Após editar o schema do banco de dados, digite o comanda abaixo para gerar toda a tipagem dos objetos das tabelas de forma dinâmica:
+```
+$ npx prisma generate
+```
+- E para realizar a conexão com o banco de dados, vamos precisar instalar a lib `@prisma/client` como dependência de produção. Para isso, digite o comando:
+```
+$ npm i @prisma/client
+```
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
