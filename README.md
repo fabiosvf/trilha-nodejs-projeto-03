@@ -47,17 +47,17 @@ save-exact=true
 - Existem várias formas de trabalhar com banco de dados no Node.js;
   - Lib nativa do banco de dados
     - Como estamos trabalhando com o banco de dados `PostgreSQL`, a lib nativa é o `pg` que pode ser acessado a partir do site https://node-postgres.com/
-  - Neste caso, os códigos SQL devem ser escritos manualmente e são aplicáveis apenas ao banco de dados nativo. Caso haja a necessidade de alterar o Banco de Dados, é possível que parte do códgio precise ser reescrito para se adaptar à mudança.
+    - Neste caso, os códigos SQL devem ser escritos manualmente e são aplicáveis apenas ao banco de dados nativo. Caso haja a necessidade de alterar o Banco de Dados, é possível que parte do códgio precise ser reescrito para se adaptar à mudança.
   - Query Builders
     - Os query builds possuem um nível de abstração mais alto, pois através dessas bibliotecas é possível criar queries utilizando métodos do JavaScript, e a lib se encarrega de converter para o código SQL Nativo. A parte legal é que é possível mudar de banco de dados sem precisar reescrever a aplicação.
     - E um dos mais populares no momento é o `Knex.js`, que pode ser acessado à partir do link https://knexjs.org/
   - ORMs (Object Relational Mapper)
-    - E por último temos os ORMs que o nível mais alto de abstração, e possui muitos recursos que facilitam o desenvolvimento. Existem várias versões:
+    - E por último temos os ORMs que o nível mais alto de abstração, e possui muitos recursos que facilitam o desenvolvimento. Existem várias libs diferentes:
       - `Sequelize` https://sequelize.org/
       - `TypeORM` https://typeorm.io/
       - `Prisma` https://www.prisma.io/
-    - Neste projetos iremos utilizar o `Prisma` pela compatibilidade e integração nativa com o `TypeScript`, além de migrations automatizadas, dentre outros recursos.
-- Para instalar a lib `primsa` como dependência de desenvolvimento, digite:
+    - Neste projetos iremos utilizar a lib `Prisma` pela compatibilidade e integração nativa com o `TypeScript`, além de migrations automatizadas, dentre outros recursos.
+- Para instalar a lib `prisma` como dependência de desenvolvimento, digite:
 ```
 $ npm i prisma -D
 ```
@@ -80,6 +80,12 @@ $ npx prisma generate
 ```
 $ npm i @prisma/client
 ```
+
+## Configurando o Docker
+- O Docker permite criar ambientes inteiros dentro de uma espécie de imagem, onde podemos instalar o banco de dados e publicar um serviço rodando sem precisar alterar o ambiente da máquina onde o docker estiver instalado. O melhor de tudo é que caso o servidor mude, é possível levar essa imagem do Docker para qualquer outro ambiente, e subí-lo novamente sem interferir nas funcionalidades. Neste caso o ambiente se mantém o mesmo e intacto.
+- Uma ideia geral de como o Docker funciona, é parecido com o que ambientes virtualizados como `VirtualBox`, `VMware` e `Hyper-V`. Neste ambiente é possível instalar qualquer tipo de sistema operacional de forma apartada, o único problema é que é necessário subir uma estrutura completa de sistema operacional que irá dividir o consumo dos recursos de processamento e memória da máquina em que está rodando. Já com o `Docker` não é preciso instalar todo o sistema operacional, ele possui recursos que permite instalar apenas o necessário para rodar o banco de dados ou iniciar o serviço de uma api por exemplo. Desta forma, o container irá consumir poucos recursos, apenas o suficiente para rodar a funcionalidade. Isso torna o `Docker` uma opção muito mais rápida e muito mais leve.
+- Segue o guia para instalação do Docker:
+  - https://docs.docker.com/get-docker/
 
 ## Como executar
 - Crie uma pasta para o projeto
