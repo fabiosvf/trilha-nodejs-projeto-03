@@ -80,12 +80,100 @@ $ npx prisma generate
 ```
 $ npm i @prisma/client
 ```
+- Após a configuração do Docker e do Banco de Dados PostgreSQL explicado na próxima sessão, podemos executar migrations automatizadas e até acessar uma ferramenta para visualização das tabelas do banco de dados utilizando o `Prisma`
+- Para rodar uma `migration` digite o seguinte comando:
+  - Este comando cria uma migration para manter a estrutura de tabelas detalhada no arquivo `./prisma/schema.prisma` sempre atualizada e sincronizada com o banco de dados
+  - Lembrando que a banco de dados é acessado considerando a url mapeada no arquivo `./env`
+  - Além disso, caso ele detecte que existem alterações na estrutura de tabelas, este irá solicitar um nome para a atividade, afim de criar a migration personalizada.
+```
+$ npx prisma migrate dev
+```
+- Para acessar a ferramenta de visualização das tabelas dentro do banco de dados, digite:
+```
+$ npx prisma studio
+```
 
 ## Configurando o Docker
 - O Docker permite criar ambientes inteiros dentro de uma espécie de imagem, onde podemos instalar o banco de dados e publicar um serviço rodando sem precisar alterar o ambiente da máquina onde o docker estiver instalado. O melhor de tudo é que caso o servidor mude, é possível levar essa imagem do Docker para qualquer outro ambiente, e subí-lo novamente sem interferir nas funcionalidades. Neste caso o ambiente se mantém o mesmo e intacto.
 - Uma ideia geral de como o Docker funciona, é parecido com o que ambientes virtualizados como `VirtualBox`, `VMware` e `Hyper-V` fazem. Neste ambiente é possível instalar qualquer tipo de sistema operacional de forma apartada sem interferir no sistema operacional da máquina em que está rodando a máquina virtual. O único problema é que é necessário subir uma estrutura completa de sistema operacional que irá dividir o consumo dos recursos de processamento e memória da máquina em que está rodando. Já com o `Docker` não é preciso instalar todo o sistema operacional, ele possui recursos que permitem instalar apenas o necessário para rodar o banco de dados ou iniciar o serviço de uma api por exemplo. Desta forma, o container irá consumir poucos recursos, apenas o suficiente para rodar a funcionalidade. Isso torna o `Docker` uma opção muito mais rápida e muito mais leve.
 - Segue o guia para instalação do Docker:
   - https://docs.docker.com/get-docker/
+
+### Entendendo o Docker Hub
+- O Docker Hub é um repositório de imagens. As imagens definem o software disponível nos contêineres. Uma imagem do Docker contém código de aplicativo, bibliotecas, ferramentas, dependências e outros arquivos necessários para executar um aplicativo. Quando alguém executa uma imagem, ela pode se tornar uma ou várias instâncias de um contêiner. Segue o link para acessar as imagens:
+  - https://hub.docker.com/
+- A imagem oficial para instalação do PostgreSQL está no seguinte link: https://hub.docker.com/_/postgres. No entanto, iremos utilizar a imagem gerenciada pela Bitnami que possui um contexto mais focado em segurança. Segue o link:
+  - https://hub.docker.com/r/bitnami/postgresql
+- Para instalar a imagem do Postgres gerenciado pela Bitnami, digite o seguinte comando no terminal:
+  - Onde `--name` é o nome do container, no nosso caso `api-solid-pg`
+  - `-e` é utilizado para passagem de parâmetros na criação do container do nosso banco de dados, no nosso caso passamos três desses parâmetros, são eles:
+    - `POSTGRESQL_USERNAME=docker`, nome de usuário
+    - `POSTGRESQL_PASSWORD=docker`, senha
+    - `POSTGRESQL_DATABASE=apisolid`, nome do banco de dados
+  - `-p` é utilizado para especificar a porta em que o banco de dados estará disponível para conexão. Ele é separado em dois valores, um do lado esquerdo dos `:` dois pontos, e um do lado direito, que representam um DE PARA entre o ambiente dentro do container e o ambiente fora do container que irá acessar o banco de dados. Então, quando a gente quer se conectar ao banco de dados do container, acessamos a porta que representa o lado externo da conexão, e o docker se encarrega de traduzir para sua equivalente dentro do container e faz o redirecionamento automático
+    - A porta `5432` do lado esquerdo equivale a porta de dentro do container
+    - A porta `5432` do lado direito equivale a porta do host/lado externo
+  - `bitnami/postgresql` é a imagem de origem de onde contém todas as configurações e os dados para a criação do nosso banco de dados dentro do nosso container do Docker
+```
+$ docker run --name api-solid-pg -e POSTGRESQL_USERNAME=docker -e POSTGRESQL_PASSWORD=docker -e POSTGRESQL_DATABASE=apisolid -p 5432:5432 bitnami/postgresql
+```
+
+### Comandos básicos do Docker
+- Para mostrar a versão do Docker que está instalada, digite:
+```
+$ docker --version
+```
+- Para executar uma imagem, como apresentado na sessão anterior, digite:
+  - _Se o Docker não encontrar no disco a imagem informada em `NOME_DA_IMAGEM`, então irá procurar no repositório do Docker Hub_
+  - _Além disso, como já visto, é possível passar parâmetros na criação da imagem_
+```
+$ docker run NOME_DA_IMAGEM
+```
+- Para listar as imagens disponíveis no Docker, digite:
+```
+$ docker image ls
+```
+- Para apagar uma imagem, digite:
+```
+$ docker image rmi NOME_DA_IMAGEM
+```
+- Para listar todos os contêineres, digite:
+  - A partir deste comando é possível obter o `CONTAINER_ID` ou o `NAME` para executar procedimentos específicos com o contêiner, como por exemplo, iniciar, parar ou apagar.
+```
+$ docker container ls --all
+```
+- Para listar apenas os contêineres ativos, digite:
+```
+$ docker container ls
+```
+- Para iniciar um contêiner, digite:
+```
+$ docker container start CONTAINER_ID/NAME
+```
+- Para parar um contêiner, digite:
+```
+$ docker container start CONTAINER_ID/NAME
+```
+- Para remover um contêiner, digite:
+```
+$ docker container rm CONTAINER_ID/NAME
+```
+- Para listar os logs de um contêiner, digite:
+```
+$ docker logs CONTAINER_ID/NAME
+```
+- Para listar todos os contêineres que estão rodando, digite:
+```
+$ docker ps
+```
+- Para listar todos os contêires criados, independente do status de execução, digite:
+```
+$ docker ps -a
+```
+- Para maiores detalhes, consulte a documentação oficial do Docker. O link a seguir é um tutorial básico dos principais comandos do Docker:
+  - https://balta.io/blog/docker-instalacao-configuracao-e-primeiros-passos
+
+
 
 ## Como executar
 - Crie uma pasta para o projeto
