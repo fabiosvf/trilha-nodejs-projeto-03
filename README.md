@@ -173,7 +173,44 @@ $ docker ps -a
 - Para maiores detalhes, consulte a documentação oficial do Docker. O link a seguir é um tutorial básico dos principais comandos do Docker:
   - https://balta.io/blog/docker-instalacao-configuracao-e-primeiros-passos
 
+### Configurando o Docker Compose
+- É possível automatizar a instalação de uma imagem do PostgreSQL, incluindo a criação do Banco de Dados.
+- Para isso, crie o arquivo `docker-compose.yml` na raiz do projeto
+- Agora vamos traduzir o comando abaixo
+```
+$ docker run --name api-solid-pg -e POSTGRESQL_USERNAME=docker -e POSTGRESQL_PASSWORD=docker -e POSTGRESQL_DATABASE=apisolid -p 5432:5432 bitnami/postgresql
+```
+- na linguagem que o `docker-compose.yml` entende
+```
+version: '3'
 
+services:
+  api-solid-pg:
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRESQL_USERNAME=docker
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=apisolid
+```
+- Com o arquivo de configuração do Docker criado, basta digitar o seguinte comanda para instalar e iniciar o serviço do Banco de Dados:
+  - _O parâmetro `-d` executa o comando em modo `detach`, ou seja, não prende a linha de comando, e o processo fica executando em segundo plano (background)._
+```
+$ docker compose up -d
+```
+- Para parar todos os container da aplicação que estão configurados no arquivo `docker-compose.yml` basta digitar:
+```
+$ docker compose stop
+```
+- Agora caso deseje remover todos os contêineres, basta digitar o coamndo:
+```
+$ docker compose down
+```
+- É possível também iniciar os contêineres através do comando:
+```
+$ docker compose start
+```
 
 ## Como executar
 - Crie uma pasta para o projeto
