@@ -194,12 +194,12 @@ services:
       - POSTGRESQL_PASSWORD=docker
       - POSTGRESQL_DATABASE=apisolid
 ```
-- Com o arquivo de configuração do Docker criado, basta digitar o seguinte comanda para instalar e iniciar o serviço do Banco de Dados:
+- Com o arquivo de configuração do Docker criado, basta digitar o seguinte comando para instalar e iniciar o serviço do Banco de Dados:
   - _O parâmetro `-d` executa o comando em modo `detach`, ou seja, não prende a linha de comando, e o processo fica executando em segundo plano (background)._
 ```
 $ docker compose up -d
 ```
-- Para parar todos os container da aplicação que estão configurados no arquivo `docker-compose.yml` basta digitar:
+- Para parar todos os contêineres da aplicação que estão configurados no arquivo `docker-compose.yml` basta digitar:
 ```
 $ docker compose stop
 ```
