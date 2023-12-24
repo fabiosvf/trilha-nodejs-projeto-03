@@ -212,6 +212,18 @@ $ docker compose down
 $ docker compose start
 ```
 
+## Trabalhando com Criptografia
+- A biblioteca que iremos trabalha é a `bcryptjs`
+- Essa é a biblioteca do Node mais utilizada para fazer Hash de senhas
+- Para instalar essa biblioteca digite:
+```
+$ npm i bcryptjs
+```
+- E como essa biblioteca não foi desenvolvida em TypeScript, então será necessário instalar a lib de tipos como dependência de desenvolvimento. Para isso digite:
+```
+$ npm i -D @types/bcryptjs
+```
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
