@@ -224,6 +224,16 @@ $ npm i bcryptjs
 $ npm i -D @types/bcryptjs
 ```
 
+## Configurando os Testes
+- A ferramenta que iremos utilizar é o `Vitest`
+  - https://vitest.dev/
+- Para instalar a lib `vitest` como dependência de desenvolvimento, digite:
+```
+$ npm i vitest vite-tsconfig-paths -D
+```
+- Além disso, foi instalado também o plugin `vite-tsconfig-paths` para que a ferramenta de testes consiga identificar os paths configurados no arquivo `tsconfig.json`
+- Todas as configurações do Vitest serão feitas no arquivo `vite.config.ts` na raiz do projeto
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
