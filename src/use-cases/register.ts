@@ -18,6 +18,8 @@ export class RegisterUseCase {
 
     if (userWithSameEmail) {
       throw new UserAlreadyExistsError();
+    } else {
+      // TODO: Here we should log to an external tool like DataDog/NewRelic/Sentry
     }
 
     await this.usersRepository.create({
