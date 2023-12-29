@@ -1,24 +1,12 @@
 import { compare } from 'bcryptjs';
 import { expect, describe, it } from 'vitest';
 import { RegisterUseCase } from './register';
+import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository';
 
 describe('Register Use Case', () => {
   it('should hash user password upon registration', async () => {
-    const registerUseCase = new RegisterUseCase({
-      async findByEmail(email) {
-        return null;
-      },
-
-      async create(data) {
-        return {
-          id: 'user-1',
-          nome: data.name,
-          email: data.email,
-          password_hash: data.password_hash,
-          created_at: new Date(),
-        };
-      },
-    });
+    const usersRepository = new InMemoryUsersRepository();
+    const registerUseCase = new RegisterUseCase(usersRepository);
 
     const { user } = await registerUseCase.execute({
       name: 'John Doe',
@@ -30,6 +18,7 @@ describe('Register Use Case', () => {
       '123456',
       user.password_hash,
     );
+
     expect(isPasswordCorrectlyHashed).toBe(true);
   });
 });
