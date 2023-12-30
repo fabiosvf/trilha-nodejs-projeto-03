@@ -233,6 +233,22 @@ $ npm i vitest vite-tsconfig-paths -D
 ```
 - Além disso, foi instalado também o plugin `vite-tsconfig-paths` para que a ferramenta de testes consiga identificar os paths configurados no arquivo `tsconfig.json`
 - Todas as configurações do Vitest serão feitas no arquivo `vite.config.ts` na raiz do projeto
+- Instale também a lib `vite` como dependência de desenvolvimento, pois ela será utilizada para carregar o método `defineConfig` no arquivo de configuração `vite.config.ts`
+
+### Configurando Vitest Coverage
+- A função `Coverage` do Vitest permite gerar um relatório detalhado de erros, varrendo todos os módulos do sistema e criando uma pasta na raiz do projeto com o nome `coverage`
+  - Para que essa pasta não suba para o GitHub, inclu-a no arquivo `.gitignore`
+- Crie um novo script no arquivo `package.json` na sessão `scripts` com o seguinte código:
+```json
+"test:coverage": "vitest run --coverage"
+```
+- Após definir essa configuração, execute o comando abaixo:
+```
+$ npm run test:coverage
+```
+- Na primeira vez que você executar, o sistema irá identificar que a dependência `@vitest/coverage-c8` não está instalada e se deseja instalar. Confirme com `y`.
+  - Finalizada a instalação, execute o comando anterior novamente.
+  - O relatório gerado com esse recurso pode ser aberto à partir do arquivo `index.html` disponível na pasta `coverage`
 
 ## Como executar
 - Crie uma pasta para o projeto
