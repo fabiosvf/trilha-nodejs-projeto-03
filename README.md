@@ -235,7 +235,7 @@ $ npm i vitest vite-tsconfig-paths -D
 - Todas as configurações do Vitest serão feitas no arquivo `vite.config.ts` na raiz do projeto
 - Instale também a lib `vite` como dependência de desenvolvimento, pois ela será utilizada para carregar o método `defineConfig` no arquivo de configuração `vite.config.ts`
 
-### Configurando Vitest Coverage
+### Configurando a Ferramenta `Coverage` do Vitest
 - A função `Coverage` do Vitest permite gerar um relatório detalhado da cobertura dos testes nos arquivos do sistema, varrendo todos os módulos do sistema e criando uma pasta na raiz do projeto com o nome `coverage` com todas essas informações.
   - Para que essa pasta não suba para o GitHub, inclu-a no arquivo `.gitignore`
 - Para executarmos a rotina que irá criar esse relatório, crie um novo script no arquivo `package.json` na sessão `scripts` com o seguinte código:
@@ -249,6 +249,22 @@ $ npm run test:coverage
 - Na primeira vez que você executar esse comando, o sistema irá identificar que a dependência `@vitest/coverage-c8` não está instalada e irá perguntar se deseja instalar. Confirme com `y` para instalar.
   - Finalizada a instalação, execute o comando anterior novamente.
   - O relatório gerado com esse recurso pode ser aberto à partir do arquivo `index.html` disponível na pasta `coverage`
+
+### Configurando a Ferramenta `Vitest UI`
+- A ferramenta `Vitest UI` é uma versão visual dos testes
+  - https://vitest.dev/guide/ui.html
+- Para instalar essa ferramenta digite o seguinte comando no terminal:
+```
+$ npm i -D @vitest/ui
+```
+- Após instalar a lib `@vitest/ui` como dependência de desenvolvimento, crie um novo script no arquivo `package.json` com o seguinte código:
+```json
+"test:ui": "vitest --ui"
+```
+- Para executar essa ferramenta, digite o seguinte comando no terminal:
+```
+$ npm run test:ui
+```
 
 ## Como executar
 - Crie uma pasta para o projeto
