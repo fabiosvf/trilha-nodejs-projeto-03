@@ -291,6 +291,15 @@ $ npm run test:ui
 - Para maiores detalhes consulte o link abaixo:
   - https://jwt.io/
 
+### Integração entre `Fastify` e `JWT`
+- Como estamos utilizando o Fastify para gerenciamento das rotas HTTP, iremos precisar de uma nova biblioteca para integração do Fastify com o JWT.
+- Então, para instalar a lib, digite o seguite comando:
+```
+$ npm i @fastify/jwt
+```
+
+
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
