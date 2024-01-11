@@ -266,6 +266,31 @@ $ npm i -D @vitest/ui
 $ npm run test:ui
 ```
 
+## Trabalhando com autenticação
+- Existem várias estratégias de autenticação, mas as mais comuns são as seguintes:
+  - Basic Auth
+  - JWT JSON Web Tokens
+
+### Estratégia de Authenticação - `Basic Auth`
+- Neste modelo, o usuário, à cada requisição, precisa enviar as credenciais como cabeçalho da requisição, ou seja, o usuário deve enviar os dados de autenticação através do Header da requisição.
+- As credenciais de autentição são formados essencialmente por usuário e senha, e neste modelo eles devem ser enviados em Base 64 no formato `usuario:senha`, e Authorization: Basic.
+- Esse modelo não é muito utilizado, porque não é muito seguro ficar transitando o nome de usuário e senha a cada requisição. Mesmo que para esse modelo seja exigido a utilização do protocolo `HTTPS`. Mas, um Malware na máquina do usuário pode facilmente capturar esses dados.
+- Para maiores detalhes consulte o link abaixo:
+  - https://pt.stackoverflow.com/questions/254503/o-que-%C3%A9-basic-auth
+
+### Estratégia de Authenticação - `JWT JSON Web Token`
+- Em resumo, este modelo de autenticação funciona da seguinte forma:
+  - Você envia os dados de autenticação (que pode ser email e senha por exemplo) da mesma forma como no modelo Basic Auth, porém com a diferença de que essa requisição tem o único objetivo de obter o Token de autenticação.
+  - Esse Token, enviado pelo Back-end, é único, não-modificação e stateless (não armazenado em nenhuma estrutura de persistência de dados)
+  - Para criar o Token, o Back-end utiliza uma PALAVRA-CHAVE que é utilizado para criptografar os dados de autenticação e devolver a informação em forma de Token.
+  - O Token devolvido pelo Back-end possui três partes separadas por "." ponto. O Cabeçalho, o Payload e a Assinatura.
+    - Exemplo: header.payload.sign
+  - Como o Back-end é o detentor da PALAVRA-CHAVE, somente ele pode criar novos Tokens ou validar Tokens já criados.
+  - Uma vez gerado o Token JWT, enviaremos ele em todas as requisições HTTP através do Header (Cabeçalho) da Requisição, com o seguinte tipo de autorização:
+    - Authorization: Bearer JWT
+- Para maiores detalhes consulte o link abaixo:
+  - https://jwt.io/
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
@@ -277,7 +302,12 @@ $ git clone https://github.com/fabiosvf/trilha-nodejs-projeto-03.git .
 ```
 $ npm i
 ```
+- Suba o Contêiner do Docker
+```
+$ docker compose up -d
+```
 - Execute o serviço
 ```
 $ npm run start:dev
 ```
+-
