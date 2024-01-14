@@ -298,7 +298,67 @@ $ npm run test:ui
 $ npm i @fastify/jwt
 ```
 
+## Implementando Testes E2E (End-to-End)
+- O grande objetivo dos Testes E2E é testar a nossa aplicação de ponta a ponta, inclusive fazendo o acesso a um banco de dados de testes. Como a aplicação em questão, é uma aplicação Back-end, então os testes devem simular exatamente o que o Front-end precisa acessar e consumir da nossa API. Os testes E2E testa o processo desde a rota até a chamada no banco de dados ou qualquer outra camada necessária para a execução da rotina.
+- Em testes E2E, procuramos não utilizar Mocks ou qualquer outro artifício que geralmente utilizamos em Testes Unitários para testar alguma funcionalidade. Nos testes E2E a gente testa uma funcionalidade de forma real, com um banco de dados real, mas exclusivo apenas para os testes. Então neste caso, a gente cria uma ou mais bases de dados de Testes e diferencia esses bancos de dados através do arquivo de configuração.
+- Uma outra coisa que podemos fazer em testes E2E, é separá-los por Switch de Testes. Podemos ter um banco de dados específico para cada Switch, desta forma, podemos isolar testes especificos sem que uma Switch interfira na outra. E também, como sempre recriamos um banco de dados do zero para estes tipos de testes, pensando em performance, essa alternativa torna os testes um pouco mais rápido.
 
+### Configurando o Vitest para os Testes E2E
+- O Vitest utiliza um conceito chamado de `Test Environment`
+- É possível customizar uma variável ambiente à partir de uma pasta ou arquivo específico. Isso permite que, se a gente tiver vários arquivos, um para cada Switch de testes, possa parametrizar um banco de dados diferente para cada um deles.
+- Para que isso seja possível, a gente vai precisar criar um Pacote NPM dentro do nosso projeto, iniciando com o nome `vitest-environment-ALGUMACOISA`
+- No nosso caso, crie a pasta `vitest-environment-prisma` dentro da pasta `prisma` na raiz do projeto
+- Acesse esta nova pasta recém-criada, à partir do terminal e crie o arquivo `package.json` utilizando o comando:
+```
+$ npm init -y
+```
+- O arquivo de configuração deve ficar da seguinte forma:
+```json
+{
+  "name": "vitest-environment-prisma",
+  "version": "1.0.0",
+  "description": "",
+  "main": "prisma-test-environment.ts",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+```
+- Crie o arquivo `prisma-test-environment.ts` e digite o seguinte código:
+```ts
+import { Environment } from 'vitest';
+
+export default <Environment>{
+  name: 'prisma',
+  transformMode: 'ssr',
+  async setup() {
+    console.log('Setup');
+    return {
+      teardown() {
+        console.log('Teardown');
+      },
+    };
+  },
+};
+```
+- No arquivo `vite.config.ts`, na raiz do projeto, inclua o seguinte código dentro do método `defineConfig`:
+```ts
+{
+  test: {
+    environmentMatchGlobs: [['src/http/controllers/**', 'prisma']],
+  },
+}
+```
+- Essa configuração, em específico, irá considerar os testes criados à partir da pasta citada, além também do novo ambiente chamado prisma. Isso está relacionado à palavra `prisma` citada no projeto recém criado de nome `vitest-environment-prisma`
+- Agora, para tornar esse projeto disponível para ser vinculado ao nosso projeto principal, acesse a pasta `prisma/vitest-environment-prisma` via terminal e digite o seguinte comando:
+```
+$ npm link
+```
+- Em seguida, via terminal, volte para a raiz do projeto principal e digite o próximo comando para vincular essa nossa nova dependência interna criada, ao projeto principal:
+```
+$ npm link vitest-environment-prisma
+```
+- A partir desse ponto podemos criar os arquivos de testes dentro da pasta `controllers` do projeto utilizando o recurso de ambientes diferentes parametrizados por Switch de Testes, permitindo que tenhamos bancos de dados diferentes para cada um desses Switchs.
 
 ## Como executar
 - Crie uma pasta para o projeto
