@@ -360,6 +360,46 @@ $ npm link vitest-environment-prisma
 ```
 - A partir desse ponto podemos criar os arquivos de testes dentro da pasta `controllers` do projeto utilizando o recurso de ambientes diferentes parametrizados por Switch de Testes, permitindo que tenhamos bancos de dados diferentes para cada um desses Switchs.
 
+### Automatizando a execução dos comandos `npm link` e `npm link vitest-environment-prisma`
+- O comando `npm link` utilizado para linkar aquele novo pacote criado para os testes E2E só irão funcionar na máquina do desenvolvedor que executou estes comandos. Se outro desenvolvedor fizer um clone do projeto e tentar rodar os testes E2E, não vai funcionar, ele vai ter que rodar os mesmos comandos na máquina dele também. E esse problema também vai ocorrer caso precisemos que algum Servidor de CI como [`Circle CI`](https://circleci.com/), [`GitHub Action`](https://docs.github.com/pt/actions), etc, rodem os testes E2E antes de fazer o Deploy no ambiente de produção.
+- Então, considerando estas questões, vamos precisar automatizar a execução desses comandos à partir da sessão `scripts` dentro do arquivo `package.json`. 
+
+### Utilizando o recurso `pre` e `post` do NPM nos scripts
+- Já sabemos que na sessão de scripts dentro do arquivo `package.json` podemos automatizar a execução de vários comandos, agrupando-os e nomeando-os.
+- Além disso, existe um recurso adicional, que permite executarmos comandos adicionais, antes e depois de um script específico, basta apenas criarmos um novo script, copia do nome de um script ja existente e adicionarmos o prefixo `pre` e `post`. Isso irá fazer com que esses scripts adicionais sejam executados antes e depois do script principal respectivamente de forma automatizada
+- Por exmeplo, hoje temos um script de teste chamado `test` com o seguinte código:
+```json
+"test": "vitest run --dir src/use-cases",
+```
+- Podemos criar dois novos scripts `pretest` e `posttest`, por exemplo:
+```json
+"pretest": "echo oi",
+"test": "vitest run --dir src/use-cases",
+"posttest": "echo tchau",
+```
+- Isso significa que ao rodar o script `test` através do comando `npm run test`, o NPM irá executar automaticamente o script `pretest` antes, e o script `posttest` depois
+- Maiores detalhes, consulte o link abaixo:
+  - https://www.yld.io/blog/using-npm-pre-and-post-hooks/
+- Com base nestas informações, para contornar o problema da execução do comando `npm link` nos outros ambientes, poderíamos utilizar o seguinte script para rodar antes do script `test:e2e`:
+```json
+"pretest:e2e": "cd prisma/vitest-environment-prisma && npm link && cd ../.. && npm link vitest-environment-prisma",
+```
+- Desta forma, ao rodar o comando `npm run test:e2e`, o NPM irá executar primeiro o script `pretest:e2e` e na sequência o script `test:e2e`
+- Mas pode ser que esse comando não funcione em todos os ambientes, sendo assim, para manter compatibilidade com todos os sistemas operacionais, vamos precisar instalar uma biblioteca nova chamada `npm-run-all` como dependência de desenvolvimento e depois fazer algumas configurações na execução desses scripts. Para instalar essa lib, digite:
+```
+$ npm i npm-run-all -D
+```
+- Com isso, surgem dois novos compandos, o `run-s` e o `run-p`. O `run-p` executa os comandos do script em paralelo, já o `run-s` executa os comandos do script em sequencial. No nosso caso, iremos utilizar o comando `run-s`.
+  - Segue a documentação destes comandos: https://www.npmjs.com/package/npm-run-all
+- Finalizando esta configuração, faça os seguintes ajustes nos scripts do arquivo `package.json`:
+```json
+"test:create-prisma-environment": "npm link ./prisma/vitest-environment-prisma",
+"test:install-prisma-environment": "npm link vitest-environment-prisma",
+"pretest:e2e": "run-s test:create-prisma-environment test:install-prisma-environment",
+"test:e2e": "vitest run --dir src/http",
+```
+- Neste caso, ao executar o comando `npm run test:e2e`, o NPM irá executar o script `pretest:e2e` antes. O script `pretest:e2e` por sua vez, possui o comando `run-s` que irá executar os scripts `test:create-prisma-environment` e `test:install-prisma-environment` de forma sequencial
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
