@@ -350,6 +350,7 @@ export default <Environment>{
 }
 ```
 - Essa configuração, em específico, irá considerar os testes criados à partir da pasta citada, além também do novo ambiente chamado prisma. Isso está relacionado à palavra `prisma` citada no projeto recém criado de nome `vitest-environment-prisma`
+- Existe uma outra forma de configurar essa parte do Environment sem utilizar o arquivo de configuração `vite.config.ts`, que é fazendo uso da anotação `// @vitest-environment prisma` no início de cada um dos arquivos de teste da pasta `src/http/controllers`
 - Agora, para tornar esse projeto disponível para ser vinculado ao nosso projeto principal, acesse a pasta `prisma/vitest-environment-prisma` via terminal e digite o seguinte comando:
 ```
 $ npm link
@@ -360,14 +361,14 @@ $ npm link vitest-environment-prisma
 ```
 - A partir desse ponto podemos criar os arquivos de testes dentro da pasta `controllers` do projeto utilizando o recurso de ambientes diferentes parametrizados por Switch de Testes, permitindo que tenhamos bancos de dados diferentes para cada um desses Switchs.
 
-### Automatizando a execução dos comandos `npm link` e `npm link vitest-environment-prisma`
+## Automatizando a execução dos comandos `npm link` e `npm link vitest-environment-prisma`
 - O comando `npm link` utilizado para linkar aquele novo pacote criado para os testes E2E só irão funcionar na máquina do desenvolvedor que executou estes comandos. Se outro desenvolvedor fizer um clone do projeto e tentar rodar os testes E2E, não vai funcionar, ele vai ter que rodar os mesmos comandos na máquina dele também. E esse problema também vai ocorrer caso precisemos que algum Servidor de CI como [`Circle CI`](https://circleci.com/), [`GitHub Action`](https://docs.github.com/pt/actions), etc, rodem os testes E2E antes de fazer o Deploy no ambiente de produção.
 - Então, considerando estas questões, vamos precisar automatizar a execução desses comandos à partir da sessão `scripts` dentro do arquivo `package.json`. 
 
 ### Utilizando o recurso `pre` e `post` do NPM nos scripts
 - Já sabemos que na sessão de scripts dentro do arquivo `package.json` podemos automatizar a execução de vários comandos, agrupando-os e nomeando-os.
 - Além disso, existe um recurso adicional, que permite executarmos comandos adicionais, antes e depois de um script específico, basta apenas criarmos um novo script, copia do nome de um script ja existente e adicionarmos o prefixo `pre` e `post`. Isso irá fazer com que esses scripts adicionais sejam executados antes e depois do script principal respectivamente de forma automatizada
-- Por exmeplo, hoje temos um script de teste chamado `test` com o seguinte código:
+- Por exemplo, hoje temos um script de teste chamado `test` com o seguinte código:
 ```json
 "test": "vitest run --dir src/use-cases",
 ```
@@ -399,6 +400,11 @@ $ npm i npm-run-all -D
 "test:e2e": "vitest run --dir src/http",
 ```
 - Neste caso, ao executar o comando `npm run test:e2e`, o NPM irá executar o script `pretest:e2e` antes. O script `pretest:e2e` por sua vez, possui o comando `run-s` que irá executar os scripts `test:create-prisma-environment` e `test:install-prisma-environment` de forma sequencial
+
+## Configurando os Ambientes Isolados de Banco de Dados para Cada Switch de Testes E2E
+- Como estamos trabalhando com o PostgreSQL, ele permite, dentro do mesmo banco de dados, criar vários `schemas`, que são ambientes isolados dentro da mesma instância de banco de dados. A aplicação principal atualmente está utilizando o schema `public`, então iremos criar outros schemas para isolar esses ambientes para os testes E2E.
+- A configuração será feita no arquivo `prisma/vitest-environment-prisma/prisma-test-environment.ts`. No método `setup` (que é executado a cada vez que os testes da pasta `src/http/controllers` são executados), iremos alterar a variável de ambiente `DATABASE_URL`, modificando o schema do banco de dados para um `uuid` dinâmico gerado especificamente para cada um dos arquivos da Switch de Testes E2E.
+- Ao final dos testes, o método `teardown` é executado, e é neste momento que o banco de dados de testes é excluído e a conexão encerrada.
 
 ## Como executar
 - Crie uma pasta para o projeto

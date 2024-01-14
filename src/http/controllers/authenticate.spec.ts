@@ -1,3 +1,6 @@
-import { test } from 'vitest';
+// @vitest-environment prisma
+import { expect, test } from 'vitest';
 
-test('ok', () => {});
+test('ok', () => {
+  expect(2).toBe(2);
+});
