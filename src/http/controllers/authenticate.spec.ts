@@ -1,4 +1,3 @@
-// @vitest-environment prisma
 import { expect, test } from 'vitest';
 
 test('ok', () => {

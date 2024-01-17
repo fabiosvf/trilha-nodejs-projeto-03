@@ -406,6 +406,13 @@ $ npm i npm-run-all -D
 - A configuração será feita no arquivo `prisma/vitest-environment-prisma/prisma-test-environment.ts`. No método `setup` (que é executado a cada vez que os testes da pasta `src/http/controllers` são executados), iremos alterar a variável de ambiente `DATABASE_URL`, modificando o schema do banco de dados para um `uuid` dinâmico gerado especificamente para cada um dos arquivos da Switch de Testes E2E.
 - Ao final dos testes, o método `teardown` é executado, e é neste momento que o banco de dados de testes é excluído e a conexão encerrada.
 
+### Configurando a biblioteca `supertest`
+- Para prosseguir com os testes E2E na nossa aplicação precisaremos fazer requisições (chamadas HTTP), e para que isso seja possível sem ter que colocar a nossa aplicação no ar, vamos precisar instalar, como dependência de desenvolvimento, uma biblioteca chamada `supertest` e sua resptiva dependência de definição de testes `@types/supertest`.
+- Para isso, digite o seguinte comando:
+```
+$ npm i supertest @types/supertest -D
+```
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
@@ -425,4 +432,3 @@ $ docker compose up -d
 ```
 $ npm run start:dev
 ```
--
