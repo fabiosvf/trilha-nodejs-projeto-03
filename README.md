@@ -407,7 +407,7 @@ $ npm i npm-run-all -D
 - Ao final dos testes, o método `teardown` é executado, e é neste momento que o banco de dados de testes é excluído e a conexão encerrada.
 
 ### Configurando a biblioteca `supertest`
-- Para prosseguir com os testes E2E na nossa aplicação precisaremos fazer requisições (chamadas HTTP), e para que isso seja possível sem ter que colocar a nossa aplicação no ar, vamos precisar instalar, como dependência de desenvolvimento, uma biblioteca chamada `supertest` e sua resptiva dependência de definição de testes `@types/supertest`.
+- Para prosseguir com os testes E2E na nossa aplicação precisaremos fazer requisições (chamadas HTTP), e para que isso seja possível sem ter que colocar a nossa aplicação no ar, vamos precisar instalar, como dependência de desenvolvimento, uma biblioteca chamada `supertest` e sua respectiva dependência de definição de testes `@types/supertest`.
 - Para isso, digite o seguinte comando:
 ```
 $ npm i supertest @types/supertest -D
