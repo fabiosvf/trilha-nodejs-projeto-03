@@ -413,6 +413,70 @@ $ npm i npm-run-all -D
 $ npm i supertest @types/supertest -D
 ```
 
+## Refresh Token
+- Como vimos, o `token JWT` é uma forma segura e prática de autenticar as nossas requisições, pois não precisamos enviar o usuário e senha à cada requisição como é feito no caso do `Basic Authentication`.
+- A ideia principal do `token JWT` é fazer a autenticação uma única vez, e passar utilizar o token nas próximas requisições até à sua data de expiração.
+- Quando um token expira, é necessário gerar um novo token fazem a autenticação novamente.
+- Não é recomendado manter data de expiração muito longa para os tokens que seráo utilizados para validar as requisições do FrontEnd. Um prazo de uns 10 minutos é um tempo válido para expiração desse token.
+- Agora, e pensando em uma maior comodidade para o usuário, existe uma técnica chamada de `Refresh Token`, que nada mais é do que a ideia de permitir que a aplicação gere um novo Token de autenticação assim que ele expirar. Com isso, o usuário não precisa autenticar a aplicação à cada 10 minutos.
+- Em geral, funciona da seguinte forma, um novo token é criado, chamado de `Refresh Token` e com uma data de expiração mais longa, por volta de uns 7 dias. Esse token não fica disponível da mesma forma que o token de autenticação, ele é armazenado no BLABLABLA, e é utilizado para gerar automaticamente um novo JWT assim que expirar os 10 minutos.
+- Para definir um tempo máximo de expiração do Token JWT em 10 minutos, abra o arquivo `src/app.ts`, localize o trecho de código onde é feito o registro do `fastifyJwt` e adicione a propriedade `expiresIn` conforme mostrado abaixo:
+```ts
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
+  sign: {
+    expiresIn: '10m',
+  },
+});
+```
+- No arquivo `src/http/controllers/users/authenticate.ts` crie um novo token JWT que fará a função do Refresh Token com uma data de expiração de 7 dias. Vai ficar assim:
+```ts
+    const refreshToken = await reply.jwtSign(
+      {},
+      {
+        sign: {
+          sub: user.id,
+          expiresIn: '7d',
+        },
+      },
+    );
+```
+- Como já comentado anteriormente, o token de autenticação que tem um prazo de 10 minutos(no nosso exemplo), é enviado através de uma requisição http simples e é visível por qualquer usuário. Mas como ele tem um prazo de validade curto, diminui as chances de alguém malicioso acessar os dados.
+- Já no caso do Refresh Token, ele é enviado através de um cookie. E a grande sacada aqui é que é possível evitar que ele (token) seja acessado através do FrontEnd (usuário final).
+- Para instalar a lib que irá permitir o acesso aos cookies através do Fastify, digite o seguinte comando:
+```
+$ npm i @fastify/cookie
+```
+- Não esqueça de registrar esse plugin no arquivo `src/app.ts` 
+- Com o plugin do Cookie devidamente registrado, volte no arquivo `src/http/controllers/users/authenticate.ts` antes do `send` do `reply`, sete o Cookie `refreshToken` através do método `setCookie`. vci ficar da seguinte forma:
+```ts
+    return reply
+      .setCookie('refreshToken', refreshToken, {
+        path: '/',
+        secure: true,
+        sameSite: true,
+        httpOnly: true,
+      })
+      .status(200)
+      .send({
+        token,
+      });
+```
+- Os parâmetros adicionais passados na criação do Cookie é para reforçar a segurança do Refresh Token e restringir o uso dele apenas dentro mesmo site onde o back-end está sendo processado, além de habilitado algumas opções de segurança e criptografia.
+- Adicione no arquivo `src/app.ts` na parte do registro do plugin `fastifyJwt`, as configurações de armazenamento do cookie `refreshToken`
+```ts
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
+  cookie: {
+    cookieName: 'refreshToken',
+    signed: false,
+  },
+  sign: {
+    expiresIn: '10m',
+  },
+});
+```
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
