@@ -418,8 +418,8 @@ $ npm i supertest @types/supertest -D
 - A ideia principal do `token JWT` é fazer a autenticação uma única vez, e passar utilizar o token nas próximas requisições até à sua data de expiração.
 - Quando um token expira, é necessário gerar um novo token fazem a autenticação novamente.
 - Não é recomendado manter data de expiração muito longa para os tokens que seráo utilizados para validar as requisições do FrontEnd. Um prazo de uns 10 minutos é um tempo válido para expiração desse token.
-- Agora, e pensando em uma maior comodidade para o usuário, existe uma técnica chamada de `Refresh Token`, que nada mais é do que a ideia de permitir que a aplicação gere um novo Token de autenticação assim que ele expirar. Com isso, o usuário não precisa autenticar a aplicação à cada 10 minutos.
-- Em geral, funciona da seguinte forma, um novo token é criado, chamado de `Refresh Token` e com uma data de expiração mais longa, por volta de uns 7 dias. Esse token não fica disponível da mesma forma que o token de autenticação, ele é armazenado no BLABLABLA, e é utilizado para gerar automaticamente um novo JWT assim que expirar os 10 minutos.
+- Agora, pensando em uma maior comodidade para o usuário, existe uma técnica chamada de `Refresh Token`, que nada mais é do que a ideia de permitir que a aplicação gere um novo Token de autenticação assim que ele expirar. Com isso, o usuário não precisa autenticar a aplicação à cada 10 minutos.
+- Em geral, funciona da seguinte forma, um novo token é criado, chamado de `Refresh Token` e com uma data de expiração mais longa, por volta de uns 7 dias. Esse token não fica disponível da mesma forma que o token de autenticação, ele é armazenado em um `Cookie`, e é utilizado para gerar automaticamente um novo JWT assim que expirar os 10 minutos.
 - Para definir um tempo máximo de expiração do Token JWT em 10 minutos, abra o arquivo `src/app.ts`, localize o trecho de código onde é feito o registro do `fastifyJwt` e adicione a propriedade `expiresIn` conforme mostrado abaixo:
 ```ts
 app.register(fastifyJwt, {
@@ -441,14 +441,14 @@ app.register(fastifyJwt, {
       },
     );
 ```
-- Como já comentado anteriormente, o token de autenticação que tem um prazo de 10 minutos(no nosso exemplo), é enviado através de uma requisição http simples e é visível por qualquer usuário. Mas como ele tem um prazo de validade curto, diminui as chances de alguém malicioso acessar os dados.
-- Já no caso do Refresh Token, ele é enviado através de um cookie. E a grande sacada aqui é que é possível evitar que ele (token) seja acessado através do FrontEnd (usuário final).
+- Como já comentado anteriormente, o token de autenticação que tem um prazo de 10 minutos (no nosso exemplo), é enviado através de uma requisição http simples e é visível por qualquer usuário. Mas como ele tem um prazo de validade curto, diminui as chances de alguém malicioso acessar os dados.
+- Já no caso do Refresh Token, ele é enviado através de um cookie. E a grande sacada aqui é que é possível evitar que esse token seja acessado através do FrontEnd (usuário final).
 - Para instalar a lib que irá permitir o acesso aos cookies através do Fastify, digite o seguinte comando:
 ```
 $ npm i @fastify/cookie
 ```
 - Não esqueça de registrar esse plugin no arquivo `src/app.ts` 
-- Com o plugin do Cookie devidamente registrado, volte no arquivo `src/http/controllers/users/authenticate.ts` antes do `send` do `reply`, sete o Cookie `refreshToken` através do método `setCookie`. vci ficar da seguinte forma:
+- Com o plugin do Cookie devidamente registrado, volte no arquivo `src/http/controllers/users/authenticate.ts` antes do `send` do `reply`, sete o Cookie `refreshToken` através do método `setCookie`. Vai ficar da seguinte forma:
 ```ts
     return reply
       .setCookie('refreshToken', refreshToken, {
@@ -462,7 +462,7 @@ $ npm i @fastify/cookie
         token,
       });
 ```
-- Os parâmetros adicionais passados na criação do Cookie é para reforçar a segurança do Refresh Token e restringir o uso dele apenas dentro mesmo site onde o back-end está sendo processado, além de habilitado algumas opções de segurança e criptografia.
+- Os parâmetros adicionais passados na criação do Cookie é para reforçar a segurança do Refresh Token e restringir o uso dele apenas dentro do mesmo site onde o back-end está sendo processado, além de habilitado algumas opções de segurança e criptografia.
 - Adicione no arquivo `src/app.ts` na parte do registro do plugin `fastifyJwt`, as configurações de armazenamento do cookie `refreshToken`
 ```ts
 app.register(fastifyJwt, {
@@ -477,6 +477,17 @@ app.register(fastifyJwt, {
 });
 ```
 - E por fim, crie uma nova Controller de nome `src/http/controllers/users/refresh.ts` que será responsável por atualizar o Token JWT expirado, e uma nova rota em `src/http/controllers/users/routes.ts` com o método `patch` para o path `/token/refresh` apontando para a Controller `refresh`.
+
+## Implementando um Controle de Acesso Baseado em Função `RBAC`
+- Pensando no controle de acesso da nossa aplicação, existe um modelo de acesso conhecido como `RBAC`, que no inglês significa `Role-based Authorization Control`, ou Controle de Acesso Baseado em Função. Segue alguns links com uma explicação mais detalhada do conceito de `RBAC`:
+  - https://www.cloudflare.com/pt-br/learning/access-management/role-based-access-control-rbac/
+  - https://www.gocache.com.br/en/dicas/o-que-e-rbac-role-based-access-control/
+  - https://en.wikipedia.org/wiki/Role-based_access_control
+- É muito mais fácil criar funções, definir o que cada função pode fazer, e em seguida associar as funções ao usuário.
+- Com base nessa ideia, vamos criar um novo campo na tabela `User` do banco de dados chamado `rule` e associá-lo a um novo tipo chamado `Rule` com os possíveis valores `ADMIN` e `MEMBER`. Essa configuração pode ser consultada a partir do schema do banco no arquivo `prisma/schema.prisma`.
+  - _Não esquecer de rodar o comando `npx prisma migrate dev` para criar uma nova migration da alteração do banco de dados._
+- Em seguida, vamos criar um novo `middleware` que irá fazer a verificação de acesso do usuário logado baseado na `role`. O arquivo com a implementação encontra-se no arquivo `src/http/middlewares/verify-user-role.ts`
+- Por fim, basta incluir nas rotas, a chamada deste novo `middleware`. No nosso caso, vamos implementar na rota `/gyms` do arquivo `src/http/controllers/gyms/routes.ts` e na rota `/check-ins/:checkInId/validate` do arquivo `src/http/controllers/check-ins/routes.ts`. Ambas as rotas só permitirá o acesso de usuários com a `role` do tipo `ADMIN`.
 
 ## Como executar
 - Crie uma pasta para o projeto
