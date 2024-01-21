@@ -476,6 +476,7 @@ app.register(fastifyJwt, {
   },
 });
 ```
+- E por fim, crie uma nova Controller de nome `src/http/controllers/users/refresh.ts` que será responsável por atualizar o Token JWT expirado, e uma nova rota em `src/http/controllers/users/routes.ts` com o método `patch` para o path `/token/refresh` apontando para a Controller `refresh`.
 
 ## Como executar
 - Crie uma pasta para o projeto
