@@ -489,6 +489,24 @@ app.register(fastifyJwt, {
 - Em seguida, vamos criar um novo `middleware` que irá fazer a verificação de acesso do usuário logado baseado na `role`. O arquivo com a implementação encontra-se no arquivo `src/http/middlewares/verify-user-role.ts`
 - Por fim, basta incluir nas rotas, a chamada deste novo `middleware`. No nosso caso, vamos implementar na rota `/gyms` do arquivo `src/http/controllers/gyms/routes.ts` e na rota `/check-ins/:checkInId/validate` do arquivo `src/http/controllers/check-ins/routes.ts`. Ambas as rotas só permitirá o acesso de usuários com a `role` do tipo `ADMIN`.
 
+## Configurando o CI/CD no Projeto
+- `CI` e `CD` são coisas diferentes, mas que podem trabalhar juntas.
+- O `CI` ou `Continuous Integration`, em resumo, é responsável por validar o código que está chegando no repositório que será utilizado para publicação do pacote em produção. Existem diversas ferramentas no mercado que fazem esse trabalho. O objetivo aqui é não deixar nenhuma versão de código defeituoso fazer merge com a versão de produção sem a garantia de que está funcionando tudo corretamente. Neste caso, é possível aplicar testes automatizados para este objetivo.
+- Já o `CD`  ou `Continuous Deployment/Delivery`, é a continuação do processo, ou seja, o código já foi entregue no respositório com a garantia de que está tudo funcionando, e agora precisa ser aplicado no ambiente de produção.
+- Segue um link com uma explicação mais detalhada:
+  - https://www.redhat.com/pt-br/topics/devops/what-is-ci-cd
+
+### CI - Continuous Integration
+- Vamos iniciar pelo `CI`, e dentre todas as ferramentas existentes, vamos utilizar a do próprio GitHub que é chamada de `Github Actions`.
+- Para configurar o `Github Actions` crie a pasta `.github` na raiz do projeto. E em seguida, dentro dessa pasta, crie uma outra pasta com o nome `workflows`
+- Dentro da pasta `workflows` irão ficar todos os arquivos da esteira de comandos. Os arquivos dentro dessa pasta devem ter a extensão `.yml` para que funcione.
+- Vamos criar o nosso primeiro workflow chamado `run-unit-tests.yml` que será responsável por rodar nossos testes unitários.
+- Os arquivos `.yml` possuem uma sintaxe própria e seguem a mesma lógica do `Python` que é em relação a identação do código de configuração. Para entender e aprender mais sobre como criar arquivos `.yml` acesse o link abaixo:
+  - https://docs.github.com/pt/actions/learn-github-actions/understanding-github-actions
+- O Github criou um espaço chamado `Marketplace` que é um lugar onde você pode encontrar arquivos `.yml` prontos para uma ação específica. Por exemplo, para configurar o ambiente do Node.js, você pode procurar pela action `Setup Node.js environment`. Segue o link do Marketplace do Github:
+  - https://github.com/marketplace?type=actions
+
+
 ## Como executar
 - Crie uma pasta para o projeto
 - Acesse a pasta
