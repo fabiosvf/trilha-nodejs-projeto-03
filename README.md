@@ -521,6 +521,15 @@ $ git status
 $ git add .
 $ git commit -m "CI Testes E2E"
 ```
+- Finalmente, para criar uma `pull_request`, digite o seguinte comando:
+```
+$ git push origin e2e
+```
+- E em seguida, acesse o repositório do código no GitHub, e irá aparecer o botão `Compare & pull request`, basta clicar nesse botão, ou no terminal, digitar o seguinte comando:
+```
+$ gh pr create
+```
+- Confirme com `Enter`
 
 ## Como executar
 - Crie uma pasta para o projeto
