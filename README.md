@@ -500,12 +500,27 @@ app.register(fastifyJwt, {
 - Vamos iniciar pelo `CI`, e dentre todas as ferramentas existentes, vamos utilizar a do próprio GitHub que é chamada de `Github Actions`.
 - Para configurar o `Github Actions` crie a pasta `.github` na raiz do projeto. E em seguida, dentro dessa pasta, crie uma outra pasta com o nome `workflows`
 - Dentro da pasta `workflows` irão ficar todos os arquivos da esteira de comandos. Os arquivos dentro dessa pasta devem ter a extensão `.yml` para que funcione.
-- Vamos criar o nosso primeiro workflow chamado `run-unit-tests.yml` que será responsável por rodar nossos testes unitários.
+
+### Rodando os Testes Unitários de Forma Automatizada
+- Vamos criar o nosso primeiro workflow chamado `run-unit-tests.yml` que será responsável por rodar nossos testes unitários toda vez que for feito um `push` para o repositório do GitHub.
 - Os arquivos `.yml` possuem uma sintaxe própria e seguem a mesma lógica do `Python` que é em relação a identação do código de configuração. Para entender e aprender mais sobre como criar arquivos `.yml` acesse o link abaixo:
   - https://docs.github.com/pt/actions/learn-github-actions/understanding-github-actions
 - O Github criou um espaço chamado `Marketplace` que é um lugar onde você pode encontrar arquivos `.yml` prontos para uma ação específica. Por exemplo, para configurar o ambiente do Node.js, você pode procurar pela action `Setup Node.js environment`. Segue o link do Marketplace do Github:
   - https://github.com/marketplace?type=actions
 
+### Rodando os Testes E2E de Forma Automatizada
+- Vamos criar o arquivo `.github/workflows/run-e2e-tests.yml` para rodar os testes E2E toda vez que for feito um `pull_request` no repositório do GitHub.
+- Vamos criar uma nova branch chamada `e2e`, para isso digite o seguinte comando no terminal:
+```
+$ git checkout -b e2e
+```
+- Neste ponto, já não estamos mais na branch `main`, mudamos para a branch `e2e`.
+- Para adicionar as alterações nesta nova branch, digite os seguintes comandos:
+```
+$ git status
+$ git add .
+$ git commit -m "CI Testes E2E"
+```
 
 ## Como executar
 - Crie uma pasta para o projeto
